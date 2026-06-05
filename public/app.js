@@ -496,45 +496,41 @@ function initWaitlistForm() {
     }
     
     try {
-      const response = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name, email, college, interest })
-      });
-      
-      const result = await response.json();
-      
-      if (response.ok) {
-        // Registration success
+      const { data, error } = await window.supabase
+        .from('waitlist')
+        .insert([{ name, email, college, interest }])
+        .select();
+
+      if (error) {
+        messageEl.className = 'form-feedback error';
+        if (error.code === '23505') {
+          messageEl.textContent = 'DUPLICATE_NODE: Email already exists in the system.';
+        } else {
+          messageEl.textContent = error.message || 'TRANSMISSION_FAILED: System validation reject.';
+        }
+      } else {
+        const nodeId = `SKL-${String(data[0].id).padStart(4, '0')}`;
+        const queuePosition = data[0].id;
+
         messageEl.className = 'form-feedback success';
-        messageEl.innerHTML = `TRANSMISSION_COMPLETE: Node registered.<br>POSITION: <span class="red-accent">${result.data.queuePosition}</span> // ID: <span class="red-accent">${result.data.nodeId}</span>`;
-        
-        // Reset form inputs
+        messageEl.innerHTML = `TRANSMISSION_COMPLETE: Node registered.<br>POSITION: <span class="red-accent">${queuePosition}</span> // ID: <span class="red-accent">${nodeId}</span>`;
+
         form.reset();
-        
-        // Sync and open Live Telemetry Dashboard overlay
+
         const panel = document.getElementById('telemetry-panel');
         if (panel) {
           setTimeout(() => {
             panel.classList.add('open');
-            // Trigger stats reload
             if (window.fetchTelemetry) {
               window.fetchTelemetry();
             }
           }, 800);
         }
-      } else {
-        // Registration failed (duplicate or bad parameters)
-        messageEl.className = 'form-feedback error';
-        messageEl.textContent = result.error || 'TRANSMISSION_FAILED: System validation reject.';
       }
-      
     } catch (error) {
       console.error('Waitlist submission failed:', error);
       messageEl.className = 'form-feedback error';
-      messageEl.textContent = 'SYSTEM_FAULT: Connection timeout. Node failed to link.';
+      messageEl.textContent = error?.message || 'SYSTEM_FAULT: Connection timeout. Node failed to link.';
     } finally {
       // Restore submit button
       submitBtn.disabled = false;
@@ -607,28 +603,62 @@ function initTelemetryPanel() {
   // API Fetch implementation
   async function fetchTelemetry() {
     try {
+      if (!window.supabase) return;
+
       const startTime = performance.now();
-      const response = await fetch('/api/waitlist/telemetry');
+      const totalResult = await window.supabase
+        .from('waitlist')
+        .select('id', { count: 'exact', head: true });
+      const rowsResult = await window.supabase
+        .from('waitlist')
+        .select('college, timestamp')
+        .order('timestamp', { ascending: false })
+        .limit(10);
       const endTime = performance.now();
       const clientPing = (endTime - startTime).toFixed(1);
-      
-      if (!response.ok) return;
-      const data = await response.json();
-      
-      const { totalQueue, recentNodes, topNodes, systemSpecs } = data.telemetry;
-      
-      // 1. Total registrations count
+
+      if (totalResult.error) {
+        console.error('Telemetry total count error:', totalResult.error);
+      }
+
+      const totalQueue = Number(totalResult.count) || 0;
       if (totalCountEl) {
         totalCountEl.textContent = String(totalQueue).padStart(4, '0');
       }
-      
-      // Calculate capacity bar progress (base-capacity 100 slots for Wave 1)
+
       if (fillBarEl) {
         const percentage = Math.min(100, (totalQueue / 100) * 100);
         fillBarEl.style.width = `${percentage}%`;
       }
-      
-      // 2. Render top universities list
+
+      let rows = [];
+      if (rowsResult.error) {
+        console.warn('Telemetry recent rows error:', rowsResult.error);
+        const fallbackResult = await window.supabase
+          .from('waitlist')
+          .select('college, created_at')
+          .order('created_at', { ascending: false })
+          .limit(10);
+        if (!fallbackResult.error) {
+          rows = fallbackResult.data || [];
+        }
+      } else {
+        rows = rowsResult.data || [];
+      }
+
+      const recentNodes = rows.slice(0, 5);
+      const collegeCounts = rows.reduce((acc, row) => {
+        const college = (row.college || '').trim();
+        if (!college) return acc;
+        acc[college] = (acc[college] || 0) + 1;
+        return acc;
+      }, {});
+
+      const topNodes = Object.entries(collegeCounts)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 3)
+        .map(([college, count]) => ({ college, count }));
+
       if (topCollegesEl) {
         if (topNodes.length === 0) {
           topCollegesEl.innerHTML = '<div class="list-item empty-state font-mono">Awaiting system signals...</div>';
@@ -641,41 +671,39 @@ function initTelemetryPanel() {
           `).join('');
         }
       }
-      
-      // 3. Render recent transmissions stream
+
       if (recentFeedEl) {
         if (recentNodes.length === 0) {
           recentFeedEl.innerHTML = '<div class="feed-item empty-state font-mono">Stream inactive. Submit node to initialize...</div>';
         } else {
           recentFeedEl.innerHTML = recentNodes.map(node => {
-            const timeFormatted = new Date(node.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const timestamp = node.timestamp || node.created_at || null;
+            const timeFormatted = timestamp ? new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '--:--:--';
+            const college = node.college || 'Unknown College';
             return `
               <div class="feed-node">
                 <div class="feed-node-meta">
                   <span class="feed-node-mail font-mono" style="color: var(--accent-red); font-weight: 600; text-transform: uppercase;">CONNECTION ACTIVE</span>
                   <span class="feed-node-time font-mono">${timeFormatted}</span>
                 </div>
-                <div class="feed-node-college font-mono" style="font-size: 11px; margin-top: 4px; color: var(--text-white);">Someone from <span class="red-accent" style="font-weight: 700;">${node.college}</span> joined the waitlist</div>
+                <div class="feed-node-college font-mono" style="font-size: 11px; margin-top: 4px; color: var(--text-white);">Someone from <span class="red-accent" style="font-weight: 700;">${college}</span> joined the waitlist</div>
               </div>
             `;
           }).join('');
         }
       }
-      
-      // 4. Specs update
+
       if (specPingEl) specPingEl.textContent = `${clientPing}ms`;
-      if (specSignalEl) specSignalEl.textContent = `${systemSpecs.signalDb}dB`;
+      if (specSignalEl) specSignalEl.textContent = 'N/A';
       if (specTimeEl) {
-        const serverDate = new Date(systemSpecs.serverTime);
-        specTimeEl.textContent = serverDate.toTimeString().split(' ')[0];
+        const now = new Date();
+        specTimeEl.textContent = now.toTimeString().split(' ')[0];
       }
-      
-      // Also sync footer telemetry details if visible
+
       const footerPing = document.getElementById('footer-ping');
       if (footerPing) {
         footerPing.textContent = `PING // ${clientPing}ms`;
       }
-      
     } catch (error) {
       console.error('Failed to retrieve waitlist statistics:', error);
     }
