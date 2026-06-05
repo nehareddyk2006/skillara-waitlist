@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SKILLARA // DATABASE ADMINISTRATION</title>
+  
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;700&family=Syne:wght@800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #050505;
+      --bg-secondary: #0c0c0e;
+      --bg-tertiary: #141417;
+      --accent-red: #e30613;
+      --accent-red-hover: #ff1e27;
+      --text-white: #ffffff;
+      --text-muted: #8a8a93;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --font-mono: 'Space Grotesk', monospace;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-white);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header styling */
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 30px;
+      margin-bottom: 40px;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: 2px;
+      text-decoration: none;
+      color: var(--text-white);
+    }
+
+    .logo span {
+      color: var(--accent-red);
+    }
+
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 1px;
+      background-color: rgba(227, 6, 19, 0.1);
+      border: 1px solid var(--accent-red);
+      color: var(--accent-red);
+      padding: 4px 10px;
+      border-radius: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 20px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 12px 24px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-red);
+      color: var(--text-white);
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-red-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text-white);
+      color: var(--text-white);
+    }
+
+    /* Diagnostics cards */
+    .diagnostics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .diag-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 24px;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+    }
+
+    .card-value {
+      font-family: var(--font-mono);
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .green-text {
+      color: #2ecc71;
+    }
+
+    /* Data table block */
+    .data-block {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 24px 30px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .table-title {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      padding: 18px 30px;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 400;
+      background-color: rgba(255, 255, 255, 0.01);
+    }
+
+    td {
+      padding: 18px 30px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      color: var(--text-white);
+      background-color: rgba(255, 255, 255, 0.01);
+    }
+
+    .td-id {
+      font-family: var(--font-mono);
+      color: var(--accent-red);
+      font-weight: 700;
+    }
+
+    .td-email {
+      font-weight: 500;
+      color: var(--text-white);
+    }
+
+    .td-college {
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .empty-state {
+      padding: 60px 0;
+      text-align: center;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+      
+      .header-actions {
+        width: 100%;
+      }
+      
+      .btn {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Admin Header -->
+    <header class="admin-header">
+      <div class="brand-section">
+        <a href="/" class="logo">SKL<span>.ADMIN</span></a>
+        <span class="badge">SECURE_SHELL</span>
+      </div>
+      
+      <div class="header-actions">
+        <a href="/" class="btn btn-secondary">&larr; BACK TO WEBSITE</a>
+        <a href="/api/admin/waitlist/csv" class="btn btn-primary">DOWNLOAD CSV EXPORT</a>
+      </div>
+    </header>
+
+    <!-- Diagnostics Overview -->
+    <section class="diagnostics-grid">
+      <div class="diag-card">
+        <span class="card-label">TOTAL_WAITLISTED_STUDENTS</span>
+        <span class="card-value" id="stat-total">00</span>
+      </div>
+      <div class="diag-card">
+        <span class="card-label">DATABASE_ENGINE</span>
+        <span class="card-value font-mono">SQLite 3</span>
+      </div>
+      <div class="diag-card">
+        <span class="card-label">SYSTEM_INTEGRITY</span>
+        <span class="card-value green-text">NOMINAL</span>
+      </div>
+    </section>
+
+    <!-- Waitlist Data Grid -->
+    <main class="data-block">
+      <div class="table-header">
+        <span class="table-title">WAITLIST_SUBMISSIONS_LOG [DAT_SQL]</span>
+        <span class="badge" id="table-status">SYNC_OK</span>
+      </div>
+      
+      <div class="table-container">
+        <table id="waitlist-table">
+          <thead>
+            <tr>
+              <th style="width: 10%;">NODE_ID</th>
+              <th style="width: 35%;">STUDENT_EMAIL</th>
+              <th style="width: 35%;">COLLEGE_UNIVERSITY_NODE</th>
+              <th style="width: 20%;">REGISTRATION_TIMESTAMP</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- Dynamic rows will be rendered here -->
+            <tr>
+              <td colspan="4" class="empty-state">Loading waitlist nodes...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', fetchWaitlistData);
+
+    async function fetchWaitlistData() {
+      const tableBody = document.getElementById('table-body');
+      const statTotal = document.getElementById('stat-total');
+      
+      try {
+        const response = await fetch('/api/admin/waitlist');
+        if (!response.ok) throw new Error('Failed to retrieve waitlist rows.');
+        
+        const result = await response.json();
+        const rows = result.data;
+        
+        // Update statistics counter
+        statTotal.textContent = String(rows.length).padStart(2, '0');
+        
+        if (rows.length === 0) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="4" class="empty-state">No student nodes have joined the waitlist yet.</td>
+            </tr>
+          `;
+          return;
+        }
+        
+        // Render data rows in our premium technical style
+        tableBody.innerHTML = rows.map((row, index) => {
+          const queuePosition = rows.length - index;
+          const nodeId = `SKL-${String(row.id).padStart(4, '0')}`;
+          
+          // Format date cleanly
+          const date = new Date(row.timestamp);
+          const formattedDate = date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+          });
+          
+          return `
+            <tr>
+              <td class="td-id">${nodeId}</td>
+              <td class="td-email">${escapeHtml(row.email)}</td>
+              <td class="td-college">${escapeHtml(row.college)}</td>
+              <td>${formattedDate}</td>
+            </tr>
+          `;
+        }).join('');
+        
+      } catch (error) {
+        console.error(error);
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="4" class="empty-state" style="color: var(--accent-red);">
+              SYSTEM_FAULT: Telemetry synchronization failed. Is waitlist.db active?
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    // Basic HTML escaping for security
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
