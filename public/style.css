@@ -2157,211 +2157,282 @@ select.premium-input option:focus {
 }
 
 @media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  * {
+    max-width: 100%;
+  }
+
+  img,
+  svg,
+  canvas,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+
   .header-inner {
-    padding: 0 20px;
+    padding: 0 16px;
   }
-  
+
   .system-status {
-    display: none; /* Hide internal metadata status on mobile to avoid layout crowding */
+    display: none;
   }
-  
+
+  .header-actions {
+    gap: 10px;
+  }
+
+  .btn-telemetry {
+    display: none;
+  }
+
+  .btn-header-cta {
+    padding: 10px 16px;
+    font-size: 10px;
+  }
+
+  .section,
+  .problem-section,
+  .capabilities-section,
+  .exclusivity-section,
+  .transformation-section,
+  .brand-monument-section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
   .section {
-    padding: 60px 15px; /* tightened mobile padding */
+    padding-top: 60px;
+    padding-bottom: 60px;
   }
 
-  .signature-section {
-    padding: 60px 20px;
+  .hero-section {
+    min-height: auto;
+    padding-top: 120px;
   }
 
-  .signature-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
+  .hero-title,
+  .problem-title,
+  .problem-statement,
+  .reveal-headline,
+  .brand-reveal-logo,
+  .brand-monument-title,
+  .signature-headline,
+  .final-headline,
+  .section-title,
+  .profile-headline,
+  .terminal-headline,
+  .editorial-headline,
+  .capability-panel h3,
+  .flow-step h3 {
+    font-size: clamp(1.8rem, 7vw, 3rem) !important;
+    line-height: 0.95;
+    letter-spacing: -0.4px;
+    white-space: normal !important;
+    overflow-wrap: normal;
+    word-break: normal;
+    max-width: 100%;
+    width: 100%;
+    display: block;
   }
 
-  .signature-name {
-    font-size: 0.95rem;
-    letter-spacing: 0.23em;
+  .hero-title {
+    font-size: clamp(2rem, 8vw, 4rem) !important;
+    line-height: 0.9;
   }
 
-  .brand-reveal-section {
-    min-height: 80vh;
-    padding: 40px 20px;
+  .problem-title,
+  .section-title,
+  .profile-headline,
+  .terminal-headline,
+  .signature-headline,
+  .final-headline,
+  .capability-panel h3,
+  .flow-step h3 {
+    font-size: clamp(1.8rem, 7vw, 3rem) !important;
+    line-height: 0.95;
   }
 
-  .brand-reveal-container {
-    padding: 0 20px;
+  .problem-statement {
+    font-size: clamp(2rem, 7.5vw, 3.2rem) !important;
+    line-height: 0.95;
+  }
+
+  .reveal-headline {
+    font-size: clamp(2.1rem, 9vw, 3.8rem) !important;
+    line-height: 0.92;
   }
 
   .brand-reveal-logo {
-    font-size: 2rem;
+    font-size: clamp(2rem, 7.5vw, 3rem) !important;
+    letter-spacing: 4px;
+    line-height: 0.9;
+    white-space: nowrap;
   }
 
   .brand-reveal-tagline {
-    font-size: 1.8rem;
-    gap: 8px;
+    font-size: clamp(0.8rem, 3vw, 1.2rem) !important;
+    letter-spacing: 0.18em;
+    line-height: 1.4;
   }
 
-  .brand-reveal-subtitle {
-    font-size: 0.95rem;
+  .signature-headline {
+    font-size: clamp(1.9rem, 7vw, 2.8rem) !important;
+    line-height: 0.95;
   }
 
-  .brand-reveal-accent {
-    width: 300px;
-    height: 300px;
+  .final-content {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
   }
-  
-  /* Mobile Typographic Redlines */
-  .hero-title {
-    font-size: clamp(1.4rem, 6.8vw, 2.3rem) !important; /* scaled down to prevent word OPPORTUNITIES clipping */
-    letter-spacing: -1.2px !important;
-    line-height: 1.05 !important;
-    margin-bottom: 25px !important;
+
+  .final-headline {
+    font-size: clamp(2rem, 8vw, 3.3rem) !important;
+    line-height: 1.1;
+    margin-top: 32px;
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 100%;
   }
-  
-  .hero-supporting {
-    font-size: 1rem !important;
-    margin-bottom: 35px !important;
+
+  .hero-title .word-wrapper {
+    white-space: normal !important;
   }
-  
-  .btn-premium {
-    padding: 15px 30px !important;
-    font-size: 11px !important;
-    width: 100% !important;
-    justify-content: center !important;
+
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
-  
+
+  .btn-premium,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
   .hero-footer-data {
-    flex-direction: column !important;
-    gap: 15px !important;
-    padding-top: 20px !important;
-  }
-  
-  .problem-statement {
-    font-size: clamp(1.8rem, 8vw, 3rem) !important;
-  }
-  
-  .problem-slides {
-    min-height: 120px !important; /* tightened vertical slide wrapper height on mobile */
-  }
-  
-  .transformation-statement {
-    font-size: clamp(1.2rem, 5.5vw, 1.8rem) !important;
-  }
-  
-  .reveal-headline {
-    font-size: clamp(2.2rem, 8vw, 3.2rem) !important;
-    gap: 10px !important;
-  }
-  
-  .capability-panel h3 {
-    font-size: 1.8rem !important;
-  }
-  
-  .capability-panel {
-    gap: 25px !important;
-  }
-  
-  .telemetry-box {
-    aspect-ratio: 1.5 / 1 !important;
-  }
-  
-  .terminal-body {
-    padding: 35px 20px;
-  }
-  
-  .form-row {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     gap: 20px;
   }
-  
-  .privilege-list {
-    grid-template-columns: 1fr;
-    gap: 12px;
+
+  .brand-monument-title {
+    font-size: clamp(3rem, 14vw, 4.5rem) !important;
+    letter-spacing: -2px;
   }
-  
-  .btn-submit {
-    width: 100% !important; /* full-width waitlist submit button on mobile */
-    align-self: center !important;
-  }
-  
+
   .footer-bottom {
-    flex-direction: column-reverse;
-    gap: 25px;
-    text-align: center;
-  }
-  
-  .footer-meta {
     flex-direction: column;
-    gap: 12px;
-  }
-  
-  .telemetry-panel {
-    width: 100%;
-  }
-  
-  .execution-grid,
-  .flow-grid,
-  .who-grid,
-  .founding-benefits-grid,
-  .profile-panel {
-    grid-template-columns: 1fr !important;
-  }
-  
-  .ecosystem-map {
-    grid-template-columns: 1fr !important;
-  }
-  
-  .ecosystem-cluster,
-  .core-label,
-  .benefit-card,
-  .flow-step,
-  .who-card,
-  .profile-metric,
-  .profile-score {
-    min-width: auto !important;
-  }
-  
-  .who-card-students {
-    grid-column: auto !important;
-  }
-  
-  .section {
-    padding: 50px 18px;
-  }
-  
-  .hero-actions {
-    flex-direction: column;
+    align-items: flex-start;
     gap: 18px;
   }
-  
-  .btn-secondary,
-  .btn-premium {
+
+  .footer-meta,
+  .footer-links {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .brand-monument-tagline {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    line-height: 1.6;
+  }
+
+  .problem-slides {
+    min-height: auto;
+  }
+
+  .execution-grid,
+  .flow-grid,
+  .ecosystem-map,
+  .profile-content,
+  .profile-panel,
+  .who-grid,
+  .capabilities-showcase,
+  .signature-grid,
+  .founding-benefits-grid,
+  .privilege-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  .execution-card {
+    min-height: auto;
+  }
+
+  .ecosystem-cluster {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .flow-step {
+    padding: 24px;
+  }
+
+  .profile-content {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .who-card-students {
+    grid-column: auto;
+  }
+
+  .capabilities-showcase {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .capability-tabs {
+    flex-direction: row;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 10px;
+  }
+
+  .cap-tab {
+    min-width: 150px;
+    flex-shrink: 0;
+  }
+
+  .capability-panel,
+  .capability-panel.active {
+    grid-template-columns: 1fr;
+  }
+
+  .terminal-body {
+    padding: 24px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-submit {
     width: 100%;
   }
-  
-  .problem-supporting,
-  .ecosystem-lead,
-  .profile-supporting,
-  .final-supporting {
-    font-size: 1rem !important;
+
+  .founding-benefits-grid {
+    grid-template-columns: 1fr;
   }
-  
-  /* Make header action buttons responsive on smaller viewports */
-  @media (max-width: 500px) {
-    .btn-telemetry {
-      padding: 8px 12px;
-    }
-    .btn-telemetry-text {
-      display: none; /* hide text on tiny viewports to avoid header overflow */
-    }
-    .btn-telemetry::after {
-      content: 'LIVE';
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--text-white);
-    }
-    .btn-header-cta {
-      padding: 8px 16px;
-    }
+
+  .privilege-list {
+    grid-template-columns: 1fr;
+  }
+
+  .signature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .signature-name {
+    text-align: center;
   }
 }
+
